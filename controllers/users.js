@@ -72,6 +72,7 @@ const userPost = async (req, res = response) => {
 const userPut = async (req, res = response) => {
   //PARAMETROS Y NOMBRE DE LA RUTA = :id
   const { id } = req.params;
+
   const { _id, password, google, email, ...resto } = req.body;
   //TODO VALDIAR CONTRA LA BASE DE DATOS
 
@@ -80,11 +81,27 @@ const userPut = async (req, res = response) => {
     resto.password = bcryptjs.hashSync(password, salt);
   }
 
-  const userDB = await User.findByIdAndUpdate(id, resto);
+  try {
+    const userDB = await User.findById(id);
+    if (req.files && req.files.archivo) {
+      // Subir nueva imagen a Cloudinary y obtener URL
+      const { tempFilePath } = req.files.archivo;
+      const { secure_url } = await cloudinary.uploader.upload(tempFilePath);
 
-  res.json({
-    userDB,
-  });
+      // Extraer el ID de la imagen anterior de la URL
+      const public_id = userDB.img.split("/").pop().split(".")[0];
+      // Eliminar la imagen anterior de Cloudinary
+      await cloudinary.uploader.destroy(public_id);
+
+      resto.img = secure_url;
+    }
+    const updatedUser = await User.findByIdAndUpdate(id, resto, { new: true }); // Agrega { new: true } para obtener el documento actualizado
+
+    res.json({ user: updatedUser }); // Envia el usuario actualizado en la respuesta
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar el usuario" });
+  }
 };
 
 const userDelete = async (req, res = response) => {

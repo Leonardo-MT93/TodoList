@@ -6,7 +6,7 @@ const {  userPost, userPut, userDelete} = require('../controllers/users');
 // const { validarCampos } = require('../middlewares/validar-campos');
 // const { validarJWT } = require('../middlewares/validar.jwt');
 // const {esAdminRole, tieneRole} = require('../middlewares/validar-roles');///SIMPLIFICACION
-const { fieldValidator, fileValidator } = require('../middlewares/field-validator');
+const { fieldValidator, fileValidator, identityValidator } = require('../middlewares/field-validator');
 const { jwtValidator } = require('../middlewares/JWT-validator');
 
 const router = Router();
@@ -14,11 +14,13 @@ const router = Router();
 // router.get('/', usuariosGet);
 
 router.put('/:id',[
+    jwtValidator,
+    identityValidator,
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom(existIDinUser),
-    fieldValidator,
-    check('archivo'),
-    fileValidator
+    check('name', 'El nombre es obligatorio').not().isEmpty(),
+    check('password', 'La contraseña es obligatoria y debe de ser mayor de 6 letras').isLength({min: 6}),
+    fieldValidator
 ], userPut);
 
 router.post('/', [
@@ -31,6 +33,7 @@ router.post('/', [
 
 router.delete('/:id', [   
     jwtValidator,
+    identityValidator,
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom(existIDinUser),
     fieldValidator
