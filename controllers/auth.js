@@ -38,47 +38,40 @@ const login = async (req, res = response) => {
   }
 };
 
-// const googleSignIn = async (req, res = response) => {
-//   const { id_token } = req.body;
+const googleSignIn = async (req, res = response) => {
+  const { id_token } = req.body;
 
-//   try {
-//     const { correo, nombre, imagen } = await googleVerify(id_token);
-//     let user = await User.findOne({ correo });
-//     if (!user) {
-//       //tengo que crearlo
+  try {
+    const { email, name, img } = await googleVerify(id_token);
+    let user = await User.findOne({ email });
+    if (!user) {
+      //tengo que crearlo
+      const data = {
+        name,
+        email,
+        contraseña: "LT",
+        img,
+        google: true,
+      };
+      user = new User(data);
+      await user.save();
+    } //else si el user ya existe
 
-//       const data = {
-//         nombre,
-//         correo,
-//         contraseña: "LT",
-//         imagen,
-//         rol: "USER_ROLE",
-//         google: true,
-//       };
-//       user = new User(data);
-//       await user.save();
-//     } //else si el user ya existe
-//     //Si el user tiene el estado en false lo niego
-//     if (!user.estado) {
-//       return res.status(401).json({
-//         msg: "Hable con el administrador, usuario bloqueado",
-//       });
-//     }
-//     //Generar el JWT
-//     const token = await generarJWT(user.id);
+    //Generar el JWT
+    const token = await generarJWT(user.id);
 
-//     res.json({
-//       user,
-//       token,
-//     });
-//   } catch (error) {
-//     res.status(400).json({
-//       msg: "Token de Google no es válido",
-//     });
-//   }
-// };
+    res.json({
+      user,
+      token,
+    });
+  } catch (error) {
+    res.status(400).json({
+      msg: "Token de Google no es válido",
+    });
+  }
+};
 
 module.exports = {
   login,
-//   googleSignIn,
+  googleSignIn,
 };

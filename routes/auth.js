@@ -12,9 +12,9 @@ router.post('/login',[
 ], login);
 
 
-// router.post('/google',[
-//     check('id_token', 'Token de Google es necesario').not().isEmpty(),
-//     fieldValidator
-// ], googleSignIn);
+router.post('/google',[
+    check('id_token', 'Token de Google es necesario').not().isEmpty(),
+    fieldValidator
+], googleSignIn);
 
 module.exports = router;

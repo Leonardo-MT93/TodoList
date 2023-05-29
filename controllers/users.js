@@ -7,33 +7,15 @@ const { uploadFile } = require("../helpers/upload-file");
 const fs = require("fs");
 const path = require("path");
 
-//Definimos que hace cada una de las rutas
-const usuariosGet = async (req, res = response) => {
-  // const query = req.query;
-  // const {q, nombre = 'No name', apikey, page, limit} = req.query;
-  const { limite = 5, desde = 0 } = req.query;
-  //USUARIOS ACTIVOS CON EL ESTADO EN TRUE
-  // const query = {estado : true};
-  // const users = await User.find(query)
-  // .skip(desde)
-  // .limit(limite);
 
-  // const total = await User.countDocuments(query);
+const getUser = async (req, res = response) => {
+    const {id} = req.params;
+    const user = await User.findById(id);
+    res.json( user )
 
-  // SE EJECUTAN AMBAS PROMESAS EN SIMULTANEO ----- y utilizamos la DESESTRUCUTRACION ------- SUPER UTIL YA QUE SIMPLIFICAMOS EL TIEMPO A LA MITAD
-  // const [total, users] = await Promise.all([
-  //     User.countDocuments(query),
-  //     User.find(query)
-  //         .skip(desde)
-  //         .limit(limite)
-  // ])
-  // res.json({
-  //     total,
-  //     users
-  // });
 };
 
-const userPost = async (req, res = response) => {
+const postUser = async (req, res = response) => {
   try {
     const { name, email, password } = req.body;
     const { archivo } = req.files || {}; // Verificar si req.files existe y asignar un objeto vacío por defecto
@@ -69,7 +51,7 @@ const userPost = async (req, res = response) => {
   }
 };
 
-const userPut = async (req, res = response) => {
+const putUser = async (req, res = response) => {
   //PARAMETROS Y NOMBRE DE LA RUTA = :id
   const { id } = req.params;
 
@@ -104,7 +86,7 @@ const userPut = async (req, res = response) => {
   }
 };
 
-const userDelete = async (req, res = response) => {
+const deleteUser = async (req, res = response) => {
   try {
     const { id } = req.params; //User recibido como parametro
 
@@ -126,8 +108,8 @@ const userDelete = async (req, res = response) => {
   }
 };
 module.exports = {
-  // usuariosGet,
-  userPut,
-  userPost,
-  userDelete,
+  getUser,
+  putUser,
+  postUser,
+  deleteUser,
 };

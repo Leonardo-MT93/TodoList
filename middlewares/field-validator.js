@@ -29,7 +29,7 @@ const identityValidator = (req, res, next) => {
   if (id !== userActive) {
     return res
       .status(401)
-      .json({ error: "No estás autorizado para actualizar esta cuenta" });
+      .json({ error: "No estás autorizado para ingresar a esta cuenta" });
   }
   next();
 };

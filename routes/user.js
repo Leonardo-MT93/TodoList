@@ -2,16 +2,18 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { emailExist, existIDinUser } = require('../helpers/db-validators');
-const {  userPost, userPut, userDelete} = require('../controllers/users');
-// const { validarCampos } = require('../middlewares/validar-campos');
-// const { validarJWT } = require('../middlewares/validar.jwt');
-// const {esAdminRole, tieneRole} = require('../middlewares/validar-roles');///SIMPLIFICACION
-const { fieldValidator, fileValidator, identityValidator } = require('../middlewares/field-validator');
+const { putUser, postUser, deleteUser, getUser} = require('../controllers/users');
+const { fieldValidator, identityValidator } = require('../middlewares/field-validator');
 const { jwtValidator } = require('../middlewares/JWT-validator');
 
 const router = Router();
 
-// router.get('/', usuariosGet);
+router.get('/:id',[
+    jwtValidator,
+    identityValidator,
+    check('id', 'No es un ID de Mongo válido' ).isMongoId(),
+    check('id').custom(existIDinUser),
+], getUser);
 
 router.put('/:id',[
     jwtValidator,
@@ -21,7 +23,7 @@ router.put('/:id',[
     check('name', 'El nombre es obligatorio').not().isEmpty(),
     check('password', 'La contraseña es obligatoria y debe de ser mayor de 6 letras').isLength({min: 6}),
     fieldValidator
-], userPut);
+], putUser);
 
 router.post('/', [
     check('name', 'El nombre es obligatorio').not().isEmpty(),
@@ -29,7 +31,7 @@ router.post('/', [
     check('email').custom( emailExist ),
     check('password', 'La contraseña es obligatoria y debe de ser mayor de 6 letras').isLength({min: 6}),
     fieldValidator
-],userPost);
+],postUser);
 
 router.delete('/:id', [   
     jwtValidator,
@@ -37,10 +39,5 @@ router.delete('/:id', [
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom(existIDinUser),
     fieldValidator
-], userDelete);
-
-
-
-
-
+], deleteUser);
 module.exports = router;
