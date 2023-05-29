@@ -1,9 +1,9 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { fieldValidator, identityValidator } = require('../middlewares/field-validator');
-const { createTask, getTasks } = require('../controllers/tasks');
+const { fieldValidator, taskIdentityValidator } = require('../middlewares/field-validator');
+const { createTask, getTasks, updateTask, deleteTask } = require('../controllers/tasks');
 const { jwtValidator } = require('../middlewares/JWT-validator');
-const { existIDinUser } = require('../helpers/db-validators');
+const { existIDinUser, existTask } = require('../helpers/db-validators');
 
 
 
@@ -27,23 +27,22 @@ router.post('/', [
 ], createTask);
 
 //Actualizar un registro por id - privado - cualquier persona con un token válido
-// router.put('/:id',[
-//     validarJWT,
-//     // check('nombre', 'El nombre es obligatorio').not().isEmpty(),
-//     check('id', 'No es un ID de Mongo válido' ).isMongoId(),
-//     check('id').custom(existeProducto),
-//     // check('categoria', 'La categoria es obligatoria').not().isEmpty(),
-//     validarCampos,
-// ],
-// actualizarProducto);
+router.put('/:id',[
+    jwtValidator,
+    taskIdentityValidator,
+    check('id', 'No es un ID de Mongo válido' ).isMongoId(),
+    check('id').custom(existTask),
+    check('name', 'El nombre de la tarea es obligatorio').not().isEmpty(),
+    fieldValidator,
+],
+updateTask);
 
-//Borrar categoria - privado - Admin
-// router.delete('/:id', [
-//     validarJWT,
-//     esAdminRole,
-//     check('id', 'No es un ID de Mongo válido' ).isMongoId(),
-//     check('id').custom(existeProducto),
-//     validarCampos,
-// ],
-// borrarProducto);
+router.delete('/:id', [
+    jwtValidator,
+    taskIdentityValidator,
+    check('id', 'No es un ID de Mongo válido' ).isMongoId(),
+    check('id').custom(existTask),
+    fieldValidator,
+],
+deleteTask);
 module.exports = router;

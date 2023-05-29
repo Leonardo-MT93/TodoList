@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const Task = require("../models/task");
 const getErrorMessages = (errors) => {
   return errors.map((error) => error.msg);
 };
@@ -33,8 +34,22 @@ const identityValidator = (req, res, next) => {
   }
   next();
 };
+
+const taskIdentityValidator = async(req, res, next) => {
+  const { id } = req.params;
+  const task = await Task.findById(id)
+  const userTask = task.user.toString(); //user creador de la tarea
+  const userActive = req.user.id; //User logueado
+  if (userTask !== userActive) {
+    return res
+      .status(401)
+      .json({ error: "No estás autorizado para actualizar en esta cuenta" });
+  }
+  next();
+};
 module.exports = {
   fieldValidator,
   fileValidator,
-  identityValidator
+  identityValidator,
+  taskIdentityValidator
 };

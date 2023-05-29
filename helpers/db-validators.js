@@ -1,4 +1,5 @@
 // const { Category, Product } = require('../models');
+const Task = require('../models/task');
 const User = require('../models/user');
 
 
@@ -22,12 +23,12 @@ const existIDinUser = async(id) => {
 //     }
 // }
 
-// const existeProducto = async(id) => {
-//     const existeProd = await Product.findById(id);
-//     if(!existeProd){
-//         throw new Error(`El producto con id: ${id} no existe `);
-//     }
-// }
+const existTask = async(id) => {
+    const task = await Task.findById(id);
+    if(!task){
+        throw new Error(`La tarea con id: ${id} no existe `);
+    }
+}
 
 // const coleccionesPermitidas = (coleccion = '', colecciones = []) => {
 //     if(!colecciones.includes(coleccion)){
@@ -43,6 +44,6 @@ module.exports = {
     emailExist,
     existIDinUser,
     // existeCategoria,
-    // existeProducto,
+    existTask,
     // coleccionesPermitidas
 }
