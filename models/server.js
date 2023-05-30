@@ -1,4 +1,5 @@
-const express = require('express')
+const express = require('express');
+const cors = require('cors');
 const fileUpload = require('express-fileupload');
 const { dbConnection } = require('../database/config');
 
@@ -35,7 +36,7 @@ class Server {
     middlewares(){
 
         //CORS
-        // this.app.use(cors());
+        this.app.use(cors());
         // Middleware para parseo y lectura del BODY
 
         this.app.use( express.json());
