@@ -16,12 +16,6 @@ const existIDinUser = async(id) => {
     }
 }
 
-// const existeCategoria = async(id) => {
-//     const existeCat = await Category.findById(id);
-//     if(!existeCat){
-//         throw new Error(`La Categoria con id:  ${id} no existe `);
-//     }
-// }
 
 const existTask = async(id) => {
     const task = await Task.findById(id);
@@ -30,20 +24,8 @@ const existTask = async(id) => {
     }
 }
 
-// const coleccionesPermitidas = (coleccion = '', colecciones = []) => {
-//     if(!colecciones.includes(coleccion)){
-//         throw new Error(`La coleccion ${coleccion} no es permitida, ${colecciones}`);
-//     }
-//     return true; // Hay que agregar un return TRUE porque estamos enviando una funcion con argumentos.
-// }
-
-
-
-
 module.exports = {
     emailExist,
     existIDinUser,
-    // existeCategoria,
     existTask,
-    // coleccionesPermitidas
 }
